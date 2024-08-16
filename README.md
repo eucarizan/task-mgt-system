@@ -4,13 +4,15 @@
   - [Learning outcomes](#learning-outcomes)
 
 ## Learning outcomes
+You will practice building a REST API, learn how to validate input and customize server responses, practice applying JWT authentication and learn about creating complex database queries using Spring Data.
 
 ## About
+Have you ever used any task management systems like Jira or Trello? This project is the perfect starting point to build a small yet feature rich application on your own. In this project, you will develop a task management system that allows users to create, update, and manage tasks. You'll implement JWT authentication to protect your system and create aggregate views of tasks. This will give you a good practice in creating advance CRUD applications and provide you with the necessary skills to create a useful web service for your portfolio and daily use.
 
 ## Stages
 ### 1: Registering users
 <details>
-<summary>registering users</summary>
+<summary>Create the service structure (API)</summary>
 
 #### 1.1 Description
 In a task management system, you'll often be working with multiple users. Therefore, it's useful to begin by setting up the user registration process and API access. It's important you store user data in a database right from the start and set up the project accordingly.
@@ -72,7 +74,7 @@ spring.h2.console.settings.web-allow-others=false
 **Example 1.** *request to `POST /accounts` endpoint:*
 
 *Request body:*
-```
+```json
 {
   "email": "address@domain.net",
   "password": "password"
@@ -84,7 +86,7 @@ spring.h2.console.settings.web-allow-others=false
 **Example 2.** *request to `POST /accounts` endpoint with an invalid request body:*
 
 *Request body:*
-```
+```json
 {
   "email": "address",
   "password": ""
@@ -96,7 +98,7 @@ spring.h2.console.settings.web-allow-others=false
 **Example 3.** *request to `POST /accounts` endpoint with an email address that's already taken:*
 
 *Request body:*
-```
+```json
 {
   "email": "ADDRESS@DOMAIN.NET",
   "password": "password"
