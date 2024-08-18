@@ -11,3 +11,6 @@ public class TaskManagementSystemApplication {
 	}
 
 }
+// TODO-01: GET /api/tasks endpoint
+// TODO-02: tests POST /api/accounts endpoint
+// TODO-03: tests GET /api/tasks endpoint

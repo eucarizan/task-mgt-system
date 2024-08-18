@@ -2,6 +2,7 @@ package dev.nj.task_mgt.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +18,7 @@ public class WebSecurityConfig {
         return http
                 .httpBasic(Customizer.withDefaults())                           // enable basic HTTP authentication
                 .authorizeHttpRequests(auth -> auth                             // other matchers
+                        .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
                         .requestMatchers("/error").permitAll()                  // expose /error endpoint
                         .requestMatchers("/actuator/shutdown").permitAll()      // required for tests
                         .requestMatchers("/h2-console/**").permitAll())         // expose h2 console

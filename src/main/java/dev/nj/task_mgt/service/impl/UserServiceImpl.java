@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void registerUser(NewUserDto newUserDto) {
         User user = userMapper.toEntity(newUserDto);
-        if (userRepository.existByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistsException();
         }
         userRepository.save(user);

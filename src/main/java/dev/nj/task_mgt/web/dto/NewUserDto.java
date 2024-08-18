@@ -1,8 +1,8 @@
 package dev.nj.task_mgt.web.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public record NewUserDto(
         @NotBlank(message = "email should not be blank")
@@ -10,7 +10,7 @@ public record NewUserDto(
         String email,
 
         @NotBlank(message = "password should not be blank")
-        @Min(value = 6, message = "password should be at least 6 characters")
+        @Size(min = 6, message = "password should be at least 6 characters")
         String password
 ) {
 }
