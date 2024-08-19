@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
     public User toEntity(NewUserDto dto) {
         return new User(
-                dto.email(),
+                dto.email().toLowerCase(),
                 dto.password());
     }
 }

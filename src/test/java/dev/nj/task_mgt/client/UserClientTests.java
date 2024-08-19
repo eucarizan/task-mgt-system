@@ -56,7 +56,7 @@ public class UserClientTests {
                 = restTemplate.postForEntity(URL, user, Void.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        User newUser = new User("existing@domain.net", "password");
+        User newUser = new User("EXISTING@DOMAIN.NET", "password");
         responseEntity = restTemplate.postForEntity(URL, newUser, Void.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
