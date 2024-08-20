@@ -1,7 +1,10 @@
 package dev.nj.task_mgt.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.nj.task_mgt.TaskManagementSystemApplication;
+import dev.nj.task_mgt.config.WebSecurityConfig;
 import dev.nj.task_mgt.service.UserService;
+import dev.nj.task_mgt.service.impl.UserDetailsServiceImpl;
 import dev.nj.task_mgt.web.controller.UserController;
 import dev.nj.task_mgt.web.dto.NewUserDto;
 import org.junit.jupiter.api.Test;
@@ -9,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.verify;
@@ -16,6 +20,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
+@ContextConfiguration(classes = {
+        TaskManagementSystemApplication.class,
+        WebSecurityConfig.class
+})
 public class UserControllerBootTests {
 
     @Autowired
