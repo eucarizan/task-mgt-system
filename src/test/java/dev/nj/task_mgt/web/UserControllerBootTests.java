@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.nj.task_mgt.TaskManagementSystemApplication;
 import dev.nj.task_mgt.config.WebSecurityConfig;
 import dev.nj.task_mgt.service.UserService;
-import dev.nj.task_mgt.service.impl.UserDetailsServiceImpl;
 import dev.nj.task_mgt.web.controller.UserController;
 import dev.nj.task_mgt.web.dto.NewUserDto;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,6 +39,95 @@ public class UserControllerBootTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(user)))
                 .andExpect(status().isOk());
+
+        verify(userService).registerUser(user);
+    }
+
+    @Test
+    public void registerBlankEmailFail() throws Exception {
+        NewUserDto user = new NewUserDto("", "password");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerNulLEmailFail() throws Exception {
+        NewUserDto user = new NewUserDto(null, "password");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerBadEmailFail() throws Exception {
+        NewUserDto user = new NewUserDto(" ", "password");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerMalformedEmailFail() throws Exception {
+        NewUserDto user = new NewUserDto("address@email.", "password");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerBlankPasswordFail() throws Exception {
+        NewUserDto user = new NewUserDto("address@email.com", "");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerNullPasswordFail() throws Exception {
+        NewUserDto user = new NewUserDto("address@email.com", null);
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerBadPasswordFail() throws Exception {
+        NewUserDto user = new NewUserDto("address@email.com", " ");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void registerLessThanMinLengthPasswordFail() throws Exception {
+        NewUserDto user = new NewUserDto("address@email.com", "12345");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @Disabled
+    public void registerAlreadyExistingEmailFail() throws Exception {
+        NewUserDto user = new NewUserDto("existing@email.com", "password");
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/api/accounts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(user)))
+                .andExpect(status().isConflict());
 
         verify(userService).registerUser(user);
     }
