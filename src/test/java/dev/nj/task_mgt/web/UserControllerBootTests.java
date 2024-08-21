@@ -3,10 +3,10 @@ package dev.nj.task_mgt.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.nj.task_mgt.TaskManagementSystemApplication;
 import dev.nj.task_mgt.config.WebSecurityConfig;
+import dev.nj.task_mgt.exceptions.UserAlreadyExistsException;
 import dev.nj.task_mgt.service.UserService;
 import dev.nj.task_mgt.web.controller.UserController;
 import dev.nj.task_mgt.web.dto.NewUserDto;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -116,14 +118,10 @@ public class UserControllerBootTests {
     }
 
     @Test
-    @Disabled
     public void registerAlreadyExistingEmailFail() throws Exception {
-        NewUserDto user = new NewUserDto("existing@email.com", "password");
-        mockMvc.perform(post("/api/accounts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(user)))
-                .andExpect(status().isOk());
+        doThrow(new UserAlreadyExistsException()).when(userService).registerUser(any(NewUserDto.class));
 
+        NewUserDto user = new NewUserDto("existing@email.com", "password");
         mockMvc.perform(post("/api/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(user)))
