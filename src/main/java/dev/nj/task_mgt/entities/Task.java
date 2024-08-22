@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Task {
     @Id
@@ -18,6 +20,8 @@ public class Task {
 
     private Status status;
 
+    private LocalDateTime created;
+
     private User author;
 
     public Task() {}
@@ -26,6 +30,7 @@ public class Task {
         this.title = title;
         this.description = description;
         this.status = Status.CREATED;
+        this.created = LocalDateTime.now();
         this.author = author;
     }
 
@@ -43,6 +48,10 @@ public class Task {
 
     public Status getStatus() {
         return status;
+    }
+
+    public LocalDateTime getCreated() {
+        return created;
     }
 
     public User getAuthor() {
