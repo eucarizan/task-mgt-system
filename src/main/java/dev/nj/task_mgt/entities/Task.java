@@ -1,5 +1,6 @@
 package dev.nj.task_mgt.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.nj.task_mgt.dictionaries.Status;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +21,7 @@ public class Task {
 
     private Status status;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LocalDateTime created;
 
     private User author;
