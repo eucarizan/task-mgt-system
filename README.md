@@ -12,7 +12,7 @@ Have you ever used any task management systems like Jira or Trello? This project
 ## Stages
 ### 1: Registering users
 <details>
-<summary>Create the service structure (API)</summary>
+<summary>Create the endpoint to register new users and secure the other endpoint to make it accessible to authenticated users only.</summary>
 
 #### 1.1 Description
 In a task management system, you'll often be working with multiple users. Therefore, it's useful to begin by setting up the user registration process and API access. It's important you store user data in a database right from the start and set up the project accordingly.
@@ -119,7 +119,157 @@ spring.h2.console.settings.web-allow-others=false
 
 <hr/>
 
+### 2: Creating tasks
+<details>
+<summary>Add the functionality to publish new tasks and list and filter existing tasks.</summary>
+
+#### 2.1 Description
+In the last stage, you enabled users to register on the Task Management System. They should now be able to create tasks and view those created by others. Additionally, you need to implement a function that allows filtering tasks by their author for user convenience.
+
+A task should be a straightforward object encompassing a title, which should never be blank or empty, a description explaining the task's essence, and a status indicating its current state. The task should also hold information about the user who created it and who will own the task.
+
+Any authenticated user should have the ability to create a task and view a list of all tasks in the system. To make it user-friendly, arrange the task list so that the most recent tasks show up first.
+
+#### 2.2 Objectives
+- Create the `POST /api/tasks` endpoint to accept a JSON request body with new task details:
+    ```json
+    {
+      "title": <string, not null, not blank>,
+      "description": <string, not null, not blank>
+    }
+    ```
+
+    If the request body is valid, the endpoint should respond with `200 OK` status code and a JSON response body:
+    ```json
+    {
+      "id": <string>,
+      "title": <string>,
+      "description": <string>,
+      "status": "CREATED",
+      "author": <string>
+    }
+    ```
+
+    The `id` field is a string representation of the task's unique identifier. This doesn't mean that the identifier must be a string, but the response body should present it as a string value to not depend on the database implementation. The `author` field should feature the author email in lowercase.
+    If the request body is not valid, the endpoint should return a `400 BAD REQUEST` status code.
+
+- Modify the `GET /api/tasks` endpoint to respond with `200 OK` status code and return a JSON array of all created tasks, or an empty array if no tasks exist. Each array's element should follow the same format as mentioned above:
+    ```json
+    [
+      {
+        "id": <string>,
+        "title": <string>,
+        "description": <string>,
+        "status": "CREATED",
+        "author": <string>
+      },
+      // other tasks
+    ]
+    ```
+
+    The array should display newer tasks first.
+
+- The `GET /api/tasks` endpoint should also accept an optional `author` parameter to return an array of tasks authored by a particular user. Treat this parameter as case insensitive:
+    ```
+    GET /api/tasks?author=address@domain.net
+    ```
+
+- Only authenticated users should have access to the tasks endpoints. If accessed by unauthorized users, respond with a `401 UNAUTHORIZED` status code.
+
+- Store all data in the database.
+
+#### 2.3 Examples
+**Example 1.** *request to 'POST /api/tasks' endpoint by a registered user with valid credentials (username=user1@mail.com):*
+
+*Request body:*
+```json
+{
+  "title": "new task",
+  "description": "a task for anyone"
+}
+```
+
+*Response code:* `200 OK`
+
+*Response body:*
+```json
+{
+  "id": "1",
+  "title": "new task",
+  "description": "a task for anyone",
+  "status": "CREATED",
+  "author": "user1@mail.com"
+}
+```
+
+**Example 2.** *request to 'POST /api/tasks' endpoint with an invalid request body by an authenticated user:*
+
+*Request body:*
+```json
+{
+  "title": "",
+  "description": "a task for anyone"
+}
+```
+
+*Response code:* `400 BAD REQUEST`
+
+**Example 3.** *request to 'POST /api/developers/signup' endpoint with invalid credentials:*
+
+*Request body:*
+```json
+{
+  "title": "new task",
+  "description": "a task for anyone"
+}
+```
+
+*Response code:* `401 UNAUTHORIZED`
+
+**Example 4.** *request to 'GET /api/tasks' endpoint with valid user credentials:*
+
+*Response code:* `200 OK`
+
+*Response body:*
+```json
+[
+  {
+    "id": "1",
+    "title": "new task",
+    "description": "a task for anyone",
+    "status": "CREATED",
+    "author": "user1@mail.com"
+  }
+]
+```
+
+**Example 5.** *request to 'GET /api/tasks?author=USER1@mail.com' with valid user credentials:*
+
+*Response code:* `200 OK`
+
+*Response body:*
+```json
+[
+  {
+    "id": "1",
+    "title": "new task",
+    "description": "a task for anyone",
+    "status": "CREATED",
+    "author": "user1@mail.com"
+  }
+]
+```
+
+</details>
+
+<hr/>
+
 [<<](https://github.com/eucarizan/hs-java-backend/blob/main/README.md)
+<!--
+<summary>Introduce JWT authentication to let users use tokens to authenticate to access the API.</summary>
+<summary>Allow users to assign their tasks to other users and change the task statuses.</summary>
+<summary>Allow users to post comments to tasks and see all the comments for each task.</summary>
+-->
 <!--
 :%s/\(Sample \(Input\|Output\) \d:\)\n\(.*\)/```\r\r**\1**\r```\3/gc
 
@@ -137,7 +287,7 @@ spring.h2.console.settings.web-allow-others=false
 -->
 <!--
 # format example
-s_\(Example \d\.\) \(\w\+\) \(request to\) \(/\w\+\)\+ \(.*:\)_**\1** *\3 \'\2 \4\' \5*_gc
+s_\(Example \d\.\) \(\w\+\) \(request to\) \(/[a-zA-Z0-9/?=@\.]\+\)\+ \(.*:\)_**\1** *\3 \'\2 \4\' \5*_gc
 
 # format request body
 s_\(Request body:\)\n_\*\1\*\r```_gc
@@ -146,5 +296,8 @@ s_\(Request body:\)\n_\*\1\*\r```_gc
 s_}\n\n\(Response code:\)\(.*\)_}\r```\r\r*\1\* `\2`_gc
 
 # format response code not after response body
-s_\n\(Response code:\)\(.*\)_\r*\1\* `\2`_gc
+s_\n\(Response code:\) \(.*\)_\r*\1\* `\2`_gc
+
+# format request body
+s_\(Response body:\)\n_\*\1\*\r```_gc
 -->
