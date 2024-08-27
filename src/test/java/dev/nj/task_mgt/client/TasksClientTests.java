@@ -30,14 +30,20 @@ public class TasksClientTests {
 
     @Test
     public void get_tasks_using_valid_user_should_succeed() {
-        User user = new User("address@domain.net", "password");
-        ResponseEntity<Void> postResponseEntity
-                = restTemplate.postForEntity("/api/accounts", user, Void.class);
-        assertThat(postResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        User user = getUser();
 
         ResponseEntity<Void> responseEntity
                 = restTemplate.withBasicAuth(user.getEmail(), user.getPassword())
                 .getForEntity(URL, Void.class);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    private User getUser() {
+        User user = new User("address@domain.net", "password");
+        ResponseEntity<Void> postResponseEntity
+                = restTemplate.postForEntity("/api/accounts", user, Void.class);
+        assertThat(postResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        return user;
     }
 }

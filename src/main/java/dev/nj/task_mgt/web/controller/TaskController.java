@@ -24,7 +24,9 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<Task>> getTasks(@RequestParam Optional<String> author) {
-        return author.map(s -> ResponseEntity.ok(taskService.getTasksByAuthor(s))).orElseGet(() -> ResponseEntity.ok(taskService.getTasks()));
+        return author.map(s ->
+                        ResponseEntity.ok(taskService.getTasksByAuthor(s)))
+                .orElseGet(() -> ResponseEntity.ok(taskService.getTasks()));
     }
 
     @PostMapping
