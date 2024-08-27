@@ -5,6 +5,7 @@ import dev.nj.task_mgt.entities.User;
 import dev.nj.task_mgt.repository.TaskRepository;
 import dev.nj.task_mgt.service.TaskService;
 import dev.nj.task_mgt.web.dto.NewTicketDto;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTasks() {
-        return taskRepository.findAllOrderByCreatedDesc();
+        return taskRepository.findAll(Sort.by("created"));
     }
 
     @Override
