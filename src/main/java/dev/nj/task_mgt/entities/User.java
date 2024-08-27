@@ -1,6 +1,10 @@
 package dev.nj.task_mgt.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "\"USER\"")
@@ -13,6 +17,9 @@ public class User {
     private String email;
 
     private String password;
+
+    @OneToMany(mappedBy = "author")
+    private Set<Task> tasks;
 
     public User() {
     }
@@ -32,5 +39,13 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
+    public Set<Task> getTasks() {
+        return Collections.unmodifiableSet(tasks);
     }
 }

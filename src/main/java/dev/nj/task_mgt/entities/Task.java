@@ -1,11 +1,7 @@
 package dev.nj.task_mgt.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.nj.task_mgt.dictionaries.Status;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -19,12 +15,17 @@ public class Task {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime created;
 
-    private User author;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private User user;
+
+    private String author;
 
     public Task() {}
 
@@ -33,7 +34,9 @@ public class Task {
         this.description = description;
         this.status = Status.CREATED;
         this.created = LocalDateTime.now();
-        this.author = author;
+        this.user = author;
+        this.user.addTask(this);
+        this.author = user.getEmail();
     }
 
     public Long getId() {
@@ -56,7 +59,11 @@ public class Task {
         return created;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public String getAuthor() {
-        return author.getEmail();
+        return author;
     }
 }
