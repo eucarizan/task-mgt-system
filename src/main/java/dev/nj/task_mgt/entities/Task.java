@@ -56,7 +56,7 @@ public class Task {
         return created;
     }
 
-    public User getAuthor() {
-        return author;
+    public String getAuthor() {
+        return author.getEmail();
     }
 }
