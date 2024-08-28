@@ -5,7 +5,7 @@ import dev.nj.task_mgt.entities.User;
 import dev.nj.task_mgt.repository.TaskRepository;
 import dev.nj.task_mgt.repository.UserRepository;
 import dev.nj.task_mgt.service.TaskService;
-import dev.nj.task_mgt.web.dto.NewTicketDto;
+import dev.nj.task_mgt.web.dto.NewTaskDto;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +25,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task createTask(NewTicketDto dto, UserDetails userDetails) {
+    public Task createTask(NewTaskDto dto, UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Task task = new Task(dto.title(), dto.description(), user);
         return taskRepository.save(task);
