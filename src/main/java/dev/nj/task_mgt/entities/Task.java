@@ -1,5 +1,6 @@
 package dev.nj.task_mgt.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.nj.task_mgt.dictionaries.Status;
 import jakarta.persistence.*;
 
@@ -19,10 +20,12 @@ public class Task {
     private Status status;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonIgnore
     private LocalDateTime created;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     private String author;

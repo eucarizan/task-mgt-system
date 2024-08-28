@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,7 +19,7 @@ public class User {
 
     private String password;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "user")
     private Set<Task> tasks;
 
     public User() {
@@ -27,6 +28,7 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.tasks = new HashSet<>();
     }
 
     public Long getId() {
