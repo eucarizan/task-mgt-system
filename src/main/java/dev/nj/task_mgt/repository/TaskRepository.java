@@ -12,5 +12,5 @@ import java.util.List;
 public interface TaskRepository extends CrudRepository<Task, Long>, ListPagingAndSortingRepository<Task, Long> {
     List<Task> findAll(Sort sort);
 
-    List<Task> findByAuthorIgnoreCase(String author);
+    List<Task> findByAuthorIgnoreCaseOrderByCreatedDesc(String author);
 }

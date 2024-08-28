@@ -38,6 +38,6 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTasksByAuthor(String author) {
-        return taskRepository.findByAuthorIgnoreCase(author);
+        return taskRepository.findByAuthorIgnoreCaseOrderByCreatedDesc(author);
     }
 }

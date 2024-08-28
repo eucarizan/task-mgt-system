@@ -83,6 +83,6 @@ public class TaskControllerBootTests {
 
     // TODO-01: get tasks sorted by creation
     // TODO-02: get tasks by author
-    // TODO-03: post endpoint valid
-    // TODO-04: post endpoint invalid
+    // TODO-03: post endpoint valid request body
+    // TODO-04: post endpoint invalid request body
 }
