@@ -19,18 +19,18 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .httpBasic(Customizer.withDefaults()) // enable basic HTTP authentication
+                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tasks").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/tasks").authenticated()
-                        .requestMatchers("/error").permitAll() // expose /error endpoint
-                        .requestMatchers("/actuator/shutdown").permitAll() // required for tests
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/actuator/shutdown").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                 )
-                .csrf(AbstractHttpConfigurer::disable) // allow modifying request from tests
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessions ->
-                        sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // no session
+                        sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 

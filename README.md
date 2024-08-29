@@ -2,6 +2,11 @@
 
 - [Task Management System](#task-management-system)
   - [Learning outcomes](#learning-outcomes)
+  - [About](#about)
+  - [Stages](#stages)
+    - [1: Registering users](#1-registering-users)
+    - [2: Creating tasks](#2-creating-tasks)
+    - [3: Authenticating with JWT](#3-authenticating-with-jwt)
 
 ## Learning outcomes
 You will practice building a REST API, learn how to validate input and customize server responses, practice applying JWT authentication and learn about creating complex database queries using Spring Data.
@@ -264,9 +269,119 @@ Any authenticated user should have the ability to create a task and view a list 
 
 <hr/>
 
+### 3: Authenticating with JWT
+<details>
+<summary>Introduce JWT authentication to let users use tokens to authenticate to access the API.</summary>
+
+#### 3.1 Description
+Great job so far! It's now time to enhance the sign-in process to improve user experience. Instead of making a user supply their login details for every request, you should let them give the details only once to receive an authentication token. They can then use this token for future sign ins.
+
+This will make the user experience better without compromising security.
+
+The normal way to put such token-based sign ins into action is by using JWT. However, the tests won't make you use the JWT format, and you're free to use any opaque token, as long as the service can recognize the user by that token.
+
+To put the bearer token sign in to use, you need to create an endpoint for users to sign in and get their tokens. This endpoint should be available only to registered users using basic HTTP sign ins. Any other endpoint, apart from the `POST /api/accounts`, should be available if a request has the Authorization header with a functioning bearer token:
+
+```
+Authorization: Bearer <token value>
+```
+
+The rest of the service should work as it did in the previous stage.
+
+#### 3.2 Objectives
+- Create the `POST /api/auth/token` endpoint that should be accessible using basic HTTP sign in. If the user signs in successfully, the endpoint should respond with the status code `200 OK` and a JSON response body:
+    ```json
+    {
+      "token": <string>
+    }
+    ```
+
+    The `token` field contains a string representation of the access token provided to the user. The token should have a reasonable expiration time, allowing the user to utilize the token without frequently signing in again. If the user does not provide valid details, the endpoint should respond with a `401 UNAUTHORIZED` status code.
+
+- Update the security settings so that any other secure endpoint can be accessed using the bearer token sign in with the granted access tokens.
+- From now on, any requests to the API will be tested using access tokens that will be added to the `Authorization` header:
+    ```json
+    Authorization: Bearer <string token value>
+    ```
+
+    But remember, in this project you don't need to turn off the basic HTTP sign in completely.
+- All other endpoints should work the same way as they did in the previous stage.
+
+#### 3.3 Examples
+**Example 1.** *request to the `POST /api/auth/token` endpoint by a registered user with valid details (username=user2@mail.com):*
+
+*Response code:* `200 OK`
+
+*Response body:*
+```json
+{
+  "token": "eyJraWQiOiJkM2E4YWY0NC0xNzc3LTRmOTAtYjc5Yy03NDRkMTI4MDQxNGQiLCJhbGciOiJSUzI1NiJ9
+            .eyJzdWIiOiJ1c2VyMkBtYWlsLmNvbSIsImV4cCI6MTcwMzA4MTIyNiwiaWF0IjoxNzAzMDc3NjI2LCJ
+            zY29wZSI6WyJST0xFX1VTRVIiXX0.g069OwkofwRPa1vuIU-Vc30UYXzmJihlg9KzxQ7LqJzKsJJO4_o
+            sSVwq7eqniiYurIBToXiW_PttteuOOps6ryDZXKqg3FBoHEiRLoUgn9vNgRydFOBo1WwB_fHxOB0xFW2
+            RrGbDlWpFs9F_8ap-O9BHf74VU4L1HRn6vTA7yhtqfBdAZscPY6XCVjUdPwXMQnNqJy2vOTdFNd1-V9X
+            X5GEFbndXMyTsQAKfhTnjdn151unbzYnllUwtb4xtRfpCLr47KuVSGrOTfDbBbjx91SB2i0wfq46b5ty
+            lCOMR7nsMWuhBxV8oqlIICLPokEejB8jAVcZXcsxSqQz9AHopGg"
+}
+```
+
+**Example 2.** *request to the `POST /api/tasks` endpoint with the token from Example 1:*
+
+*Request body:*
+```json
+{
+  "title": "second task",
+  "description": "another task"
+}
+```
+
+*Response code:* `200 OK`
+
+*Response body:*
+```json
+{
+  "id": "2",
+  "title": "second task",
+  "description": "another task",
+  "status": "CREATED",
+  "author": "user2@mail.com"
+}
+```
+
+**Example 3.** *request to the `GET /api/tasks` endpoint with the token from Example 1:*
+
+*Response code:* `200 OK`
+
+*Response body:*
+```json
+[
+  {
+    "id": "2",
+    "title": "second task",
+    "description": "another task",
+    "status": "CREATED",
+    "author": "user2@mail.com"
+  },
+  {
+    "id": "1",
+    "title": "new task",
+    "description": "a task for anyone",
+    "status": "CREATED",
+    "author": "user1@mail.com"
+  }
+]
+```
+
+**Example 4.** *request to the `GET /api/tasks` with an expired access token:*
+
+*Response code:* `401 UNAUTHORIZED`
+
+</details>
+
+<hr/>
+
 [<<](https://github.com/eucarizan/hs-java-backend/blob/main/README.md)
 <!--
-<summary>Introduce JWT authentication to let users use tokens to authenticate to access the API.</summary>
 <summary>Allow users to assign their tasks to other users and change the task statuses.</summary>
 <summary>Allow users to post comments to tasks and see all the comments for each task.</summary>
 -->
@@ -290,7 +405,7 @@ Any authenticated user should have the ability to create a task and view a list 
 s_\(Example \d\.\) \(\w\+\) \(request to\) \(/[a-zA-Z0-9/?=@\.]\+\)\+ \(.*:\)_**\1** *\3 \'\2 \4\' \5*_gc
 
 # format request body
-s_\(Request body:\)\n_\*\1\*\r```_gc
+s_\(Request body:\)\n_\*\1\*\r```json_gc
 
 # format response code after response body
 s_}\n\n\(Response code:\)\(.*\)_}\r```\r\r*\1\* `\2`_gc
@@ -298,6 +413,6 @@ s_}\n\n\(Response code:\)\(.*\)_}\r```\r\r*\1\* `\2`_gc
 # format response code not after response body
 s_\n\(Response code:\) \(.*\)_\r*\1\* `\2`_gc
 
-# format request body
-s_\(Response body:\)\n_\*\1\*\r```_gc
+# format response body
+s_\(Response body:\)\n_\*\1\*\r```json_gc
 -->

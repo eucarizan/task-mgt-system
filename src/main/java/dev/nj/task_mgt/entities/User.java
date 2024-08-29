@@ -1,6 +1,5 @@
 package dev.nj.task_mgt.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Collections;
