@@ -5,8 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,15 +22,11 @@ import java.util.List;
 
 public class AccessTokenFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccessTokenFilter.class);
-
     private final List<RequestMatcher> matchers = new ArrayList<>();
     private final AuthenticationManager manager;
     private final AuthenticationEntryPoint authenticationEntryPoint = ((request, response, authException) -> {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(authException.getMessage());
-        logger.error("unauthorized access attempt to {}", request.getRequestURI());
-        logger.error(authException.getMessage());
     });
 
     public AccessTokenFilter(AuthenticationManager manager) {
@@ -40,11 +34,11 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
         addRequestMatcher(new AntPathRequestMatcher("/api/tasks", HttpMethod.POST.name()));
         addRequestMatcher(new AntPathRequestMatcher("/api/tasks", HttpMethod.GET.name()));
-//        addRequestMatcher(new AntPathRequestMatcher("/api/accounts", HttpMethod.POST.name()));
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         boolean isMatched = matchers.stream().anyMatch(matcher -> matcher.matches(request));
         if (isMatched) {
             try {
@@ -67,5 +61,11 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
     private void addRequestMatcher(RequestMatcher matcher) {
         this.matchers.add(matcher);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getServletPath().equals("/api/auth/token")
+                && request.getMethod().equals(HttpMethod.POST.name());
     }
 }
