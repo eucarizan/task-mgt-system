@@ -2,12 +2,14 @@ package dev.nj.task_mgt.entities;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
 public class AccessTokenAuthentication implements Authentication {
     private final String token;
+    private UserDetails userDetails;
     private boolean authenticated = false;
 
     public AccessTokenAuthentication(String token) {
@@ -31,7 +33,12 @@ public class AccessTokenAuthentication implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return "bearer access token";
+//        return "bearer access token";
+        return userDetails;
+    }
+
+    public void setUserDetails(UserDetails userDetails) {
+        this.userDetails = userDetails;
     }
 
     @Override
