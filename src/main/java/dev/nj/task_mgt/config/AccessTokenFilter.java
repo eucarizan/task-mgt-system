@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AccessTokenFilter extends OncePerRequestFilter {
 
@@ -38,19 +39,16 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         boolean isMatched = matchers.stream().anyMatch(matcher -> matcher.matches(request));
         if (isMatched) {
             try {
-                var token = request.getHeader("Access-Token");
-                if (token != null) {
-                    Authentication authentication = new AccessTokenAuthentication(token);
-                    authentication = manager.authenticate(authentication);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                throw new BadCredentialsException("Access token is required");
+                String token = Optional.ofNullable(request.getHeader("Authorization"))
+                        .map(header -> header.split(" "))
+                        .filter(parts -> parts.length == 2)
+                        .map(parts -> parts[1])
+                        .orElseThrow(() -> new BadCredentialsException("Access token is required"));
+                Authentication authentication = manager.authenticate(new AccessTokenAuthentication(token));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (AuthenticationException ex) {
                 authenticationEntryPoint.commence(request, response, ex);
                 return;
